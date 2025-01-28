@@ -2,6 +2,7 @@
   "name": "bprp-react-router-stack",
   "private": true,
   "type": "module",
+  "template": true,
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",

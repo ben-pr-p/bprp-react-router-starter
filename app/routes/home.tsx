@@ -1,5 +1,7 @@
 import type { Route } from "./+types/home";
-import { Welcome } from "../welcome/welcome";
+import { useQuery } from "@tanstack/react-query";
+import { withPrefetch } from "@/lib/orpcCaller.server";
+import { orpcFetchQuery } from "@/lib/orpcFetch";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,6 +10,31 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+export async function loader() {
+  return await withPrefetch(async (queryClient, orpc) => {
+    await queryClient.prefetchQuery(orpc.getNumCpus.queryOptions());
+    await queryClient.prefetchQuery(orpc.currentDate.queryOptions());
+  });
+}
+
 export default function Home() {
-  return <Welcome />;
+  const { data, isLoading, error } = useQuery(
+    orpcFetchQuery.getNumCpus.queryOptions()
+  );
+
+  const {
+    data: date,
+    isLoading: dateLoading,
+    error: dateError,
+  } = useQuery(orpcFetchQuery.currentDate.queryOptions());
+
+  if (isLoading) return <div>Loading...</div>;
+
+  return (
+    <div>
+      CPU: {data}
+      <br />
+      Date: {date?.toISOString()}
+    </div>
+  );
 }

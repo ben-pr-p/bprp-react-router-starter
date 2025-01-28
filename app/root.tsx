@@ -5,10 +5,17 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useMatches,
 } from "react-router";
-
+import {
+  QueryClient,
+  QueryClientProvider,
+  HydrationBoundary,
+} from "@tanstack/react-query";
+import merge from "deepmerge";
 import type { Route } from "./+types/root";
 import "./app.css";
+import { useState } from "react";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -42,7 +49,37 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            // With SSR, we usually want to set some default staleTime
+            // above 0 to avoid refetching immediately on the client
+            staleTime: 60 * 1000,
+          },
+        },
+      })
+  );
+
+  const routeMatches = useMatches();
+  const dehydratedStateComponents = routeMatches
+    .map((match) => (match.data as any)?.__dehydratedState)
+    .filter(Boolean);
+
+  const dehydratedState = dehydratedStateComponents.length
+    ? dehydratedStateComponents.reduce((acc, curr) => {
+        return merge(acc, curr);
+      }, {})
+    : undefined;
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <HydrationBoundary state={dehydratedState}>
+        <Outlet />
+      </HydrationBoundary>
+    </QueryClientProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

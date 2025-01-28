@@ -1,3 +1,20 @@
+# BPRP Stack TODO
+
+Frontend:
+- [x] Tailwind
+- [x] shadcn/ui
+- [x] React Query (w/ tanstack setup)
+- [x] orpc
+
+Backend:
+- [ ] Kysely w/ Kanely
+- [ ] Graphile Migrate
+- [ ] Graphile Worker
+- [ ] React Email + sendgrid
+- [ ] Envalid
+- [ ] Add Vitest (not possible at the moment)
+
+
 # Welcome to React Router!
 
 A modern, production-ready template for building full-stack React applications using React Router.

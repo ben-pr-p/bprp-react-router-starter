@@ -2,8 +2,13 @@ import { createORPCReactQueryUtils } from "@orpc/react-query";
 import { createRouterClient } from "@orpc/server";
 import { router } from "@/orpc/router.server";
 import { QueryClient, dehydrate } from "@tanstack/react-query";
+import { getKysely } from "@/database/db.server";
 
-export const orpcCaller = createRouterClient(router);
+export const orpcCaller = createRouterClient(router, {
+  context: {
+    db: await getKysely(),
+  },
+});
 export const orpcCallerQuery = createORPCReactQueryUtils(orpcCaller);
 
 type WithPrefetchFn<T> = (

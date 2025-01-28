@@ -1,9 +1,11 @@
 {
 	"cSpell.words": [
+		"codegen",
 		"idempotently",
 		"Kysely",
 		"loglayer",
 		"orpc",
-		"pglite"
+		"pglite",
+		"sendgrid"
 	]
 }

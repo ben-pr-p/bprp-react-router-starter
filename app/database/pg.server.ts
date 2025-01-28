@@ -126,3 +126,18 @@ export async function startPgGatewayServer() {
 export function stopPgGatewayServer(server: net.Server) {
   server.close();
 }
+
+export async function getIsolatedTestPool() {
+  const { server, connectionString } = await startPgGatewayServer();
+  const pool = new Pool({ connectionString });
+  await watch(
+    {
+      connectionString,
+      migrationsFolder: config.MIGRATIONS_FOLDER,
+    },
+    // true for once (run and done)
+    true
+  );
+
+  return { pool, stop: () => stopPgGatewayServer(server) };
+}

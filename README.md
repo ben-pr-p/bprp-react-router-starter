@@ -7,12 +7,13 @@ Frontend:
 - [x] orpc
 
 Backend:
-- [ ] Kysely w/ Kanely
-- [ ] Graphile Migrate
-- [ ] Graphile Worker
-- [ ] React Email + sendgrid
-- [ ] Envalid
-- [ ] Add Vitest (not possible at the moment)
+- [x] Kysely w/ Kanely
+- [x] Graphile Migrate
+- [x] Graphile Worker
+- [x] Migrate to Hono
+- [x] React Email + sendgrid
+- [x] Envalid
+- [x] Add Vitest (not possible at the moment)
 
 
 # Welcome to React Router!

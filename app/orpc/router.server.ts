@@ -7,15 +7,26 @@ import {
 } from "@orpc/server";
 import { oz } from "@orpc/zod";
 import { z } from "zod";
+import { getKysely } from "@/database/db.server";
 
-const pub = os.context();
+type MyDB = Awaited<ReturnType<typeof getKysely>>;
 
-export const router = pub.router({
-  getNumCpus: os.handler(async ({ input, context }) => {
+type ORPCContext = {
+  db: MyDB;
+};
+
+// DB is inserted in request handler or test driver
+const base = os.context<ORPCContext>();
+
+export const router = base.router({
+  getNumCpus: base.handler(async ({ input, context }) => {
     return getNumCpus();
   }),
-  currentDate: os.handler(async ({ input, context }) => {
+  currentDate: base.handler(async ({ input, context }) => {
     return new Date();
+  }),
+  listWidgets: base.handler(async ({ input, context }) => {
+    return await context.db.selectFrom("widget").selectAll().execute();
   }),
 });
 

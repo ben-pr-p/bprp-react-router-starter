@@ -13,7 +13,8 @@ export function meta({}: Route.MetaArgs) {
 export async function loader() {
   return await withPrefetch(async (queryClient, orpc) => {
     await queryClient.prefetchQuery(orpc.getNumCpus.queryOptions());
-    await queryClient.prefetchQuery(orpc.currentDate.queryOptions());
+    // With this commented, there's an HTTP request
+    // await queryClient.prefetchQuery(orpc.currentDate.queryOptions());
   });
 }
 

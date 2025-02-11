@@ -2,6 +2,16 @@ import type { Route } from "./+types/home";
 import { useQuery } from "@tanstack/react-query";
 import { withPrefetch } from "@/lib/orpcCaller.server";
 import { orpcFetchQuery } from "@/lib/orpcFetch";
+import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { CalendarIcon } from "lucide-react";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -36,6 +46,9 @@ export default function Home() {
       CPU: {data}
       <br />
       Date: {date?.toISOString()}
+      <br />
+      ShadCN button:
+      <Button>Click me</Button>
     </div>
   );
 }

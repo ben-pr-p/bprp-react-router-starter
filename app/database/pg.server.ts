@@ -1,5 +1,5 @@
 import net from "node:net";
-import { config } from "@/config";
+import { config, MIGRATIONS_FOLDER } from "@/config";
 import log from "@/lib/log";
 import { PGlite } from "@electric-sql/pglite";
 import { migrate, watch } from "graphile-migrate";
@@ -29,7 +29,7 @@ export async function getPool(): Promise<GetPoolResult> {
 
       await migrate({
         connectionString: config.DATABASE_URL,
-        migrationsFolder: config.MIGRATIONS_FOLDER,
+        migrationsFolder: MIGRATIONS_FOLDER,
       });
 
       return {
@@ -52,7 +52,7 @@ export async function getPool(): Promise<GetPoolResult> {
     await watch(
       {
         connectionString,
-        migrationsFolder: config.MIGRATIONS_FOLDER,
+        migrationsFolder: MIGRATIONS_FOLDER,
       },
       // true for once (run and done)
       true
@@ -133,7 +133,7 @@ export async function getIsolatedTestPool() {
   await watch(
     {
       connectionString,
-      migrationsFolder: config.MIGRATIONS_FOLDER,
+      migrationsFolder: MIGRATIONS_FOLDER,
     },
     // true for once (run and done)
     true

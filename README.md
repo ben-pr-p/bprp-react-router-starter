@@ -1,118 +1,102 @@
-# BPRP Stack TODO
+# BPRP React Router Stack
 
-Frontend:
-- [x] Tailwind
-- [x] shadcn/ui
-- [x] React Query (w/ tanstack setup)
-- [x] orpc
+This is a starter pack template designed for building robust, type-safe web applications using React Router v7, Tanstack Query, PostgreSQL, Kysely, and the use of pglite (Wasm-based PostgreSQL) for testing and development, among other technologies. 
 
-Backend:
-- [x] Kysely w/ Kanely
-- [x] Graphile Migrate
-- [x] Graphile Worker
-- [x] Migrate to Hono
-- [x] React Email + sendgrid
-- [x] Envalid
-- [x] Add Vitest (not possible at the moment)
+It emphasizes a clean architecture, type-safety, and easy, isolated testing.
 
+## Key Features & Benefits
 
-# Welcome to React Router!
+*   **Full Type Safety**: End-to-end type safety from the database schema (Kysely + Kanel) through the API layer (ORPC) to your frontend components (TypeScript).
+*   **Modern Frontend**: Built with React and the latest React Router v7 via Remix.run, leveraging features like route-based code splitting and optimized data loading.
+*   **Efficient Data Management**: Utilizes React Query for powerful client-side caching, background updates, and seamless integration with server-side data fetching, including prefetching capabilities for optimal performance.
+*   **React Query Hydration Baked In**: examples for how to use 
+*   **Streamlined UI Development**: Integrates Tailwind CSS and shadcn/ui for building beautiful, accessible, and customizable user interfaces quickly.
+*   **Isolated & Fast Testing**: Employs Vitest with PG Lite (PostgreSQL compiled to Wasm) to enable fast, isolated database tests for each test case without external dependencies.
+*   **Developer Experience**: Optimized for Bun, providing fast installation, bundling, and execution. Includes tools like Graphile Migrate for database migrations and Kanel for database type generation.
 
-A modern, production-ready template for building full-stack React applications using React Router.
+## Technology Stack
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
-
-## Features
-
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+*   **Framework**: Remix.run (React Router v7) with React
+*   **Database**: PostgreSQL
+*   **Query Builder**: Kysely (Type-safe SQL)
+*   **Schema Codegen**: Kanel
+*   **Migrations**: Graphile Migrate
+*   **API**: ORPC (Type-safe RPC)
+*   **Styling**: Tailwind CSS
+*   **UI Components**: shadcn/ui
+*   **Client Data Fetching**: React Query
+*   **Testing**: Vitest with PG Lite (Wasm-based PostgreSQL)
+*   **Runtime/Bundler**: Bun
 
 ## Getting Started
 
 ### Installation
 
-Install the dependencies:
+To create a new project using this template, run:
 
 ```bash
-npm install
+bun create ben-pr-p/bprp-react-router-stack your-project-name
 ```
 
-### Development
+Replace `<template-source>` with the actual path or URL of this template repository (e.g., `github-username/repo-name`).
 
-Start the development server with HMR:
+Then, navigate into your new project directory:
 
 ```bash
-npm run dev
+cd your-project-name
 ```
 
-Your application will be available at `http://localhost:5173`.
+### Setup
 
-## Building for Production
-
-Create a production build:
+Install dependencies:
 
 ```bash
-npm run build
+bun install
 ```
 
-## Deployment
-
-### Docker Deployment
-
-This template includes three Dockerfiles optimized for different package managers:
-
-- `Dockerfile` - for npm
-- `Dockerfile.pnpm` - for pnpm
-- `Dockerfile.bun` - for bun
-
-To build and run using Docker:
+Set up your environment variables by copying the example file:
 
 ```bash
-# For npm
-docker build -t my-app .
-
-# For pnpm
-docker build -f Dockerfile.pnpm -t my-app .
-
-# For bun
-docker build -f Dockerfile.bun -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+cp .env.example .env
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+Update the `.env` file with your specific configurations (database connection, API keys, etc.).
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+### Database Setup
 
-### DIY Deployment
+Run the initial database migrations:
 
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+```bash
+bun migrate up
 ```
 
-## Styling
+Generate database types:
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+```bash
+bun codegen
+```
 
----
+### Development Server
 
-Built with ❤️ using React Router.
+Start the development server:
+
+```bash
+bun dev
+```
+
+Your application should now be running on `http://localhost:3000`.
+
+## Development Workflow
+
+*   **Adding Routes**: Create files in `app/routes/` and update `app/routes.ts`. Follow the structure outlined in the custom instructions.
+*   **Database Migrations**: Add SQL changes to `app/database/migrations/current.sql`, then run `bun migrate up` and `bun codegen`.
+*   **Data Fetching**: Define ORPC endpoints in `app/orpc/` and use them in your routes/components via loaders or React Query hooks (`useQuery`, `prefetchQuery`).
+*   **Testing**: Write tests using the `orpcTest` helper for isolated database environments. Co-locate tests with the code they are testing.
+
+Refer to the `.cursorrules` file or the detailed documentation comments within the codebase for more in-depth explanations of patterns and practices.
+
+
+# TODO
+
+- [ ] Playwright w/ seeds
+- [ ] Upgrade Shadcn to React 19 versions and Tailwind v4

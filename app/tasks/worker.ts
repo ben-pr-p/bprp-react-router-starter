@@ -24,17 +24,22 @@ const afterCreateWidget = createTask(
   }
 );
 
-const taskList = createTaskList()
-  .addTask("after-create-widget", afterCreateWidget)
-  .getTaskList();
+function getTaskList() {
+  const taskList = createTaskList()
+    .addTask("after-create-widget", afterCreateWidget)
+    .getTaskList();
+  return taskList;
+}
+
+type MyTaskList = ReturnType<typeof getTaskList>;
 
 let runner: Runner;
 let runnerPromise: Promise<Runner>;
 
 export const startWorker = async () => {
-  const { pool } = await getPool();
-
   if (!runnerPromise) {
+    const { pool } = await getPool();
+    const taskList = getTaskList();
     runnerPromise = run({
       pgPool: pool,
       taskList: taskList as unknown as TaskList,
@@ -44,7 +49,7 @@ export const startWorker = async () => {
   }
 };
 
-export const addJob: AddJobFn<typeof taskList> = async (taskName, payload) => {
+export const addJob: AddJobFn<MyTaskList> = async (taskName, payload) => {
   if (!runner) {
     await startWorker();
   }

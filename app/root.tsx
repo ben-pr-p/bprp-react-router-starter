@@ -16,6 +16,12 @@ import merge from "deepmerge";
 import type { Route } from "./+types/root";
 import "./app.css";
 import { useState } from "react";
+import { startWorker } from "./tasks/worker";
+
+export async function loader() {
+  // Just make sure it runs at some point!
+  await startWorker();
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

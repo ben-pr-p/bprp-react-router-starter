@@ -3,7 +3,7 @@ import {
   startPgGatewayServer,
   stopPgGatewayServer,
 } from "@/database/pg.server";
-import { config } from "@/config";
+import { MIGRATIONS_FOLDER } from "@/config";
 import { watch } from "graphile-migrate";
 import kanel from "kanel";
 import kanelKysely from "kanel-kysely";
@@ -16,7 +16,7 @@ async function runMigrations(connectionString: string) {
   await watch(
     {
       connectionString,
-      migrationsFolder: config.MIGRATIONS_FOLDER,
+      migrationsFolder: MIGRATIONS_FOLDER,
     },
     // true for once (run and done)
     true

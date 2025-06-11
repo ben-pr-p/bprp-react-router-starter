@@ -2,7 +2,7 @@
 
 ## Basic Technologies
 
-- **Framework**: Remix.run (React Router v7) with React
+- **Framework**: Remix.run (React Router v7) with React - imports you may expect to come from '@remix-run/react|node' actually come from 'react-router'
 - **Database**: PostgreSQL with Kysely for type-safe queries and Kanel for database schema codegen
 - **API Layer**: ORPC (similar to tRPC) for type-safe server-client communication and server-side RPC calls
 - **UI Components**: Tailwind CSS with shadcn/ui components
@@ -21,7 +21,7 @@ Do not directly add components to `app/components/ui`. That is only for componen
 2. Add an entry to `app/routes.ts`
 3. Structure your route with:
    ```typescript
-   import type { Route } from "./+types/my-route"; // path to current file
+   import type { Route } from "./+types/my-route"; // my-route is the name of the route file
 
    export async function loader({ params }: Route.LoaderArgs) {
      // Server-side data loading
@@ -202,3 +202,4 @@ export const myRouter = base.router({
 5. Use React Query's built-in caching and invalidation
 6. Write tests for critical data operations
 7. Use string interpolation instead of concatenation
+

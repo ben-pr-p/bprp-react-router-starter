@@ -26,7 +26,7 @@ AUTHOR=$(git log -1 --pretty=%an)
 DATE=$(git log -1 --pretty=%ad --date=short)
 
 # Docker image details
-IMAGE_NAME="ghcr.io/uaw-union/update-my-info"
+IMAGE_NAME="ghcr.io/uaw-union/bprp-react-router-stack"
 IMAGE_TAG="${COMMIT_HASH}"
 FULL_IMAGE="${IMAGE_NAME}:${IMAGE_TAG}"
 

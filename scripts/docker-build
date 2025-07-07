@@ -25,8 +25,11 @@ COMMIT_MESSAGE=$(git log -1 --pretty=%B | head -n 1)
 AUTHOR=$(git log -1 --pretty=%an)
 DATE=$(git log -1 --pretty=%ad --date=short)
 
+# Get package name from package.json
+PACKAGE_NAME=$(node -p "require('./package.json').name")
+
 # Docker image details
-IMAGE_NAME="ghcr.io/uaw-union/bprp-react-router-stack"
+IMAGE_NAME="ghcr.io/uaw-union/${PACKAGE_NAME}"
 IMAGE_TAG="${COMMIT_HASH}"
 FULL_IMAGE="${IMAGE_NAME}:${IMAGE_TAG}"
 

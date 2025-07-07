@@ -98,5 +98,6 @@ Refer to the `.cursorrules` file or the detailed documentation comments within t
 
 # TODO
 
-- [ ] Playwright w/ seeds
-- [ ] Upgrade Shadcn to React 19 versions and Tailwind v4
+- [ ] Make startWorker do literally nothing if started (not even return promise)
+- [ ] Add Storybook
+- [ ] 

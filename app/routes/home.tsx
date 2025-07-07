@@ -42,13 +42,13 @@ export default function Home() {
   if (isLoading) return <div>Loading...</div>;
 
   return (
-    <div>
+    <div className="p-8 bg-gradient-to-br from-purple-500/10 to-pink-500/10">
       CPU: {data}
       <br />
       Date: {date?.toISOString()}
       <br />
       ShadCN button:
-      <Button>Click me</Button>
+      <Button className="mt-4 bg-emerald-600 hover:bg-emerald-700">Click me</Button>
     </div>
   );
 }

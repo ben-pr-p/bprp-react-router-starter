@@ -1,51 +1,44 @@
 import { getPool } from "@/database/pg.server";
-import { sendEmail } from "@/emails/send";
 import type { AddJobFn } from "graphile-saga";
 import { type Runner, type TaskList, run } from "graphile-worker";
-// worker.ts
-import { createTask, createTaskList } from "graphile-worker-zod";
-import { z } from "zod";
-
-const afterCreateWidget = createTask(
-  z.object({
-    widgetId: z.string(),
-  }),
-  async ({ widgetId }) => {
-    await sendEmail(
-      {
-        to: "test@test.com",
-        from: "test@test.com",
-        replyTo: "test@test.com",
-      },
-      "Test",
-      "sample-two",
-      { widgetId }
-    );
-  }
-);
+import { createTaskList } from "graphile-worker-zod";
 
 function getTaskList() {
   const taskList = createTaskList()
-    .addTask("after-create-widget", afterCreateWidget)
+    // .addTask(
+    //   "task-one",
+    //   taskOne
+    // )
     .getTaskList();
   return taskList;
 }
+
+export const taskList = getTaskList();
 
 type MyTaskList = ReturnType<typeof getTaskList>;
 
 let runner: Runner;
 let runnerPromise: Promise<Runner>;
 
+const CRONTAB = `
+  0 * * * * task-one
+`;
+
 export const startWorker = async () => {
   if (!runnerPromise) {
-    const { pool } = await getPool();
-    const taskList = getTaskList();
-    runnerPromise = run({
-      pgPool: pool,
-      taskList: taskList as unknown as TaskList,
-    });
+    runnerPromise = (async () => {
+      const { pool } = await getPool();
+      runner = await run({
+        // @ts-expect-error - allowed to do any here - graphile-worker hasn't upgraded pg-pool types yet
+        pgPool: pool,
+        taskList: taskList as unknown as TaskList,
+        crontab: CRONTAB,
+      });
 
-    runner = await runnerPromise;
+      return runner;
+    })();
+
+    return runnerPromise;
   }
 };
 

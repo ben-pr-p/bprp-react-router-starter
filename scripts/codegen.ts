@@ -3,12 +3,23 @@ import {
   startPgGatewayServer,
   stopPgGatewayServer,
 } from "@/database/pg.server";
-import { MIGRATIONS_FOLDER } from "@/config";
+import { MIGRATIONS_FOLDER } from "@/constants";
 import { watch } from "graphile-migrate";
 import kanel from "kanel";
 import kanelKysely from "kanel-kysely";
 import camelCase from "lodash/camelCase";
 import capitalize from "lodash/capitalize";
+import { pgDump } from "@electric-sql/pglite-tools/pg_dump";
+import { PGlite } from "@electric-sql/pglite";
+import { writeFile } from "fs/promises";
+
+/**
+ * Using pgDump
+ *
+ * const dump = await pgDump({ pg })
+ * const dumpContent = await dump.text()
+ */
+
 const { processDatabase } = kanel;
 const { makeKyselyHook } = kanelKysely;
 
@@ -49,11 +60,22 @@ const makeConfig = (connectionString: string) => ({
   },
 });
 
+async function dumpDatabase(pg: PGlite) {
+  const dump = await pgDump({ pg });
+  const dumpContent = await dump.text();
+
+  await writeFile("./db-dump.sql", dumpContent);
+
+  return dumpContent;
+}
+
 async function main() {
-  const { server, connectionString } = await startPgGatewayServer();
+  const { server, connectionString, pg } = await startPgGatewayServer();
   await runMigrations(connectionString);
-  await processDatabase(makeConfig(connectionString));
-  stopPgGatewayServer(server);
+  const processDatabasePromise = processDatabase(makeConfig(connectionString));
+  const pgDumpPromise = dumpDatabase(pg);
+  await Promise.all([processDatabasePromise, pgDumpPromise]);
+  await stopPgGatewayServer(server);
 }
 
 main();

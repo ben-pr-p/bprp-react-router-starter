@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Check for uncommitted changes
+if ! git diff-index --quiet HEAD --; then
+    echo -e "${RED}❌ Error: You have uncommitted changes${NC}"
+    echo -e "${YELLOW}Please commit or stash your changes before building the Docker image.${NC}"
+    git status --short
+    exit 1
+fi
+
+# Get git commit hash
+COMMIT_HASH=$(git rev-parse --short HEAD)
+FULL_COMMIT_HASH=$(git rev-parse HEAD)
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+COMMIT_MESSAGE=$(git log -1 --pretty=%B | head -n 1)
+AUTHOR=$(git log -1 --pretty=%an)
+DATE=$(git log -1 --pretty=%ad --date=short)
+
+# Docker image details
+IMAGE_NAME="ghcr.io/uaw-union/update-my-info"
+IMAGE_TAG="${COMMIT_HASH}"
+FULL_IMAGE="${IMAGE_NAME}:${IMAGE_TAG}"
+
+echo -e "${BLUE}🐳 Building Docker image...${NC}"
+echo -e "   Image: ${FULL_IMAGE}"
+echo -e "   Platform: linux/amd64"
+echo ""
+
+# Build and push the image
+if docker buildx build --platform linux/amd64 . -t "${FULL_IMAGE}" --push; then
+    echo ""
+    echo -e "${GREEN}✅ Docker image built and pushed successfully!${NC}"
+    echo ""
+    echo -e "${BLUE}📦 Image Details:${NC}"
+    echo -e "   Repository:    ${IMAGE_NAME}"
+    echo -e "   Tag:           ${IMAGE_TAG}"
+    echo -e "   Full Image:    ${FULL_IMAGE}"
+    echo ""
+    echo -e "${BLUE}📝 Build Context:${NC}"
+    echo -e "   Branch:        ${BRANCH_NAME}"
+    echo -e "   Commit:        ${FULL_COMMIT_HASH}"
+    echo -e "   Message:       ${COMMIT_MESSAGE}"
+    echo -e "   Author:        ${AUTHOR}"
+    echo -e "   Date:          ${DATE}"
+    echo ""
+    echo -e "${BLUE}🚀 To pull this image:${NC}"
+    echo -e "   docker pull ${FULL_IMAGE}"
+    echo ""
+else
+    echo -e "${RED}❌ Docker build failed${NC}"
+    exit 1
+fi

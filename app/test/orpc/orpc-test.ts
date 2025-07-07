@@ -1,9 +1,7 @@
 import { createRouterClient } from "@orpc/server";
 import { router } from "@/orpc/router.server";
 import { getIsolatedTestKysely } from "@/database/db.server";
-import { test, type Pool } from "vitest";
-import type { Kysely } from "node_modules/kysely/dist/esm/kysely";
-import type Database from "@/database/types/Database";
+import { test } from "vitest";
 
 export async function getTestRouterClient({
   runSeeds = false,

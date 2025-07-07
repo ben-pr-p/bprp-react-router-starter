@@ -4,13 +4,13 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
-  plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
+  plugins: [reactRouter(), tailwindcss(), tsconfigPaths()],
   build: {
     cssMinify: true,
     ssr: false,
   },
   resolve:
-    process.env.NODE_ENV === "development"
+    process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
       ? {}
       : {
           alias: {
@@ -24,5 +24,8 @@ export default defineConfig({
       "@heroicons/react",
       // "@measured/puck", "react-twc"
     ],
+  },
+  test: {
+    exclude: ["node_modules", "app/test/e2e"],
   },
 });

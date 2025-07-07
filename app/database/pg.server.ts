@@ -1,5 +1,6 @@
 import net from "node:net";
-import { config, MIGRATIONS_FOLDER } from "@/config";
+import { config } from "@/config";
+import { MIGRATIONS_FOLDER } from "@/constants";
 import log from "@/lib/log";
 import { PGlite } from "@electric-sql/pglite";
 import { migrate, watch } from "graphile-migrate";
@@ -44,31 +45,43 @@ export async function getPool(): Promise<GetPoolResult> {
     return poolPromise;
   }
 
-  // Dev case
-  const { server, connectionString } = await startPgGatewayServer();
-  poolPromise = (async () => {
-    const pool = new Pool({ connectionString });
+  // Dev case - if confnig.DATABASE_URL is not set, we use the pg-gateway server
+  if (config.DATABASE_URL) {
+    poolPromise = (async () => {
+      const pool = new Pool({ connectionString: config.DATABASE_URL });
+      return { pool, stop: () => pool.end() };
+    })();
 
-    await watch(
-      {
-        connectionString,
-        migrationsFolder: MIGRATIONS_FOLDER,
-      },
-      // true for once (run and done)
-      true
-    );
+    return poolPromise;
+  } else {
+    poolPromise = (async () => {
+      const { server, connectionString } = await startPgGatewayServer();
+      console.log("connectionString", connectionString);
+      const pool = new Pool({ connectionString });
 
-    return {
-      pool,
-      stop: () => stopPgGatewayServer(server),
-    };
-  })();
+      await watch(
+        {
+          connectionString,
+          migrationsFolder: MIGRATIONS_FOLDER,
+        },
+        // true for once (run and done)
+        true
+      );
 
-  return poolPromise;
+      return {
+        pool,
+        stop: () => stopPgGatewayServer(server),
+      };
+    })();
+
+    return poolPromise;
+  }
+
+  throw new Error("Unhandled case");
 }
 
 export async function startPgGatewayServer() {
-  const db = new PGlite();
+  const db = await PGlite.create();
   const server = net.createServer(async (socket) => {
     await fromNodeSocket(socket, {
       serverVersion: "16.3",
@@ -104,9 +117,9 @@ export async function startPgGatewayServer() {
     server: net.Server;
     port: number;
     connectionString: string;
+    pg: PGlite;
   }>((resolve) =>
     server.listen(0, () => {
-      log.info("Server listening on port 7777");
       const serverAddress = server.address();
       invariant(serverAddress, "Server address is undefined");
       invariant(
@@ -117,6 +130,7 @@ export async function startPgGatewayServer() {
       resolve({
         server,
         port: serverAddress.port,
+        pg: db,
         connectionString: `postgres://postgres:postgres@localhost:${serverAddress.port}/postgres`,
       });
     })

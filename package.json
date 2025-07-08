@@ -9,6 +9,7 @@
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
     "test": "vitest run",
+    "e2e": "bun x playwright test",
     "migrate": "graphile-migrate",
     "codegen": "NODE_ENV=development bun run ./scripts/codegen.ts",
     "docker-build": "./scripts/docker-build",

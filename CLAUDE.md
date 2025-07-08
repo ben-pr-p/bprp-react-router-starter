@@ -622,6 +622,15 @@ function MyComponent() {
 - **Form wizard steps** - Users can bookmark specific steps
 - **Any state that enhances shareability**
 
+## MCP Usage
+
+When using Playwright MCP tools for browser automation and testing:
+
+- **Do not start the dev server** - Claude should not run `bun dev` or any server commands
+- **Assume a dev server is already running** on `localhost:5173`
+- Use the MCP browser tools (`mcp__playwright__*`) to interact with the running application
+- Navigate directly to `http://localhost:5173` when testing with Playwright MCP
+
 ## Best Practices
 
 1. Always use TypeScript and maintain type safety
